@@ -4,6 +4,7 @@ description = "japanese deinflection"
 version = "0.1.3"
 edition = "2021"
 license = "GPL-3.0"
+repository = "https://github.com/chronicl/deinflect"
 
 [dependencies]
 bitflags = "2.4.1"

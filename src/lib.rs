@@ -1,4 +1,4 @@
-//! ### Fast japanese deinflection.
+//! # Fast japanese deinflection.
 //!
 //! ```rust
 //! use deinflect::Deinflections;
@@ -15,7 +15,7 @@
 //! }
 //! ```
 //!
-//! This library is based on the [yomichan japanese deinflector](https://github.com/FooSoft/yomichan)
+//! This library is based on [yomichan's japanese deinflector](https://github.com/FooSoft/yomichan).
 use bitflags::bitflags;
 use once_cell::sync::Lazy;
 use rules::INFLECTION_RULES;
