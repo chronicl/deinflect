@@ -1,0 +1,12 @@
+[package]
+name = "deinflect"
+version = "0.1.0"
+edition = "2021"
+license = "GPL-3.0"
+
+[profile.release]
+debug = true
+
+[dependencies]
+bitflags = "2.4.1"
+once_cell = "1.18.0"
