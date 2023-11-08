@@ -18,7 +18,7 @@
 //! This library is based on [yomichan's japanese deinflector](https://github.com/FooSoft/yomichan).
 use bitflags::bitflags;
 use once_cell::sync::Lazy;
-use rules::INFLECTION_RULES;
+pub use rules::INFLECTION_RULES;
 
 mod rules;
 
@@ -40,7 +40,6 @@ static LOOKUP_TREE: Lazy<Tree<char, Info>> = Lazy::new(|| {
     tree
 });
 
-///
 #[derive(Debug, Clone)]
 pub struct Deinflections<'a> {
     source: &'a str,
@@ -66,6 +65,8 @@ impl<'a> Deinflections<'a> {
         };
 
         let mut i = 0;
+        // rust borrowing rules don't allow to append this.deinflections
+        // directly in the inner for loop, so we buffer until after the loop.
         let mut buffer = Vec::new();
         while i < this.deinflections.len() {
             let prev = this.deinflections[i];
@@ -294,6 +295,7 @@ struct Info {
 
 bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize), serde(transparent))]
     pub struct Reasons: u64 {
         const BA = 1;
         const CHAU = 1 << 1;
@@ -336,6 +338,7 @@ bitflags! {
 
 bitflags! {
     #[derive(Debug, Clone, Copy)]
+    #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize), serde(transparent))]
     pub struct Rules: u8 {
         const V1 = 1;   // Verb ichidan
         const V5 = 1 << 1;   // Verb godan

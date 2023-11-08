@@ -1,11 +1,15 @@
 [package]
 name = "deinflect"
 description = "japanese deinflection"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2021"
 license = "GPL-3.0"
 repository = "https://github.com/chronicl/deinflect"
 
 [dependencies]
-bitflags = "2.4.1"
-once_cell = "1.18.0"
+bitflags = "2"
+once_cell = "1"
+serde = { version = "1", features = ["derive"], optional = true }
+
+[features]
+serde = ["dep:serde", "bitflags/serde"]
