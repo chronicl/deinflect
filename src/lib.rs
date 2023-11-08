@@ -43,7 +43,7 @@ static LOOKUP_TREE: Lazy<Tree<char, Info>> = Lazy::new(|| {
 #[derive(Debug, Clone)]
 pub struct Deinflections<'a> {
     source: &'a str,
-    deinflections: Vec<DeinflectionData>,
+    deinflections: Vec<DeinflectionMeta>,
 }
 
 impl<'a> Deinflections<'a> {
@@ -54,7 +54,7 @@ impl<'a> Deinflections<'a> {
     pub fn from_word(word: &'a str) -> Self {
         let mut this = Self {
             source: word,
-            deinflections: vec![DeinflectionData {
+            deinflections: vec![DeinflectionMeta {
                 source: DeinflectionSource::Original,
                 replace_from_back: 0,
                 replace_with: "",
@@ -80,7 +80,7 @@ impl<'a> Deinflections<'a> {
             } in LOOKUP_TREE.get_submatches(chars_rev)
             {
                 if prev.rules.is_empty() || prev.rules.intersects(rule.rules_in) {
-                    buffer.push(DeinflectionData {
+                    buffer.push(DeinflectionMeta {
                         source: DeinflectionSource::Deinflection(i),
                         replace_from_back: *kana_in_chars,
                         replace_with: &rule.kana_out,
@@ -167,7 +167,7 @@ impl<'a> Deinflections<'a> {
     }
 
     /// Get more information about the deinflection.
-    pub fn data(&self, deinflection: Deinflection) -> &DeinflectionData {
+    pub fn meta(&self, deinflection: Deinflection) -> &DeinflectionMeta {
         &self.deinflections[deinflection.0]
     }
 
@@ -182,11 +182,11 @@ impl<'a> Deinflections<'a> {
 }
 
 #[derive(Debug, Clone, Copy)]
-pub struct DeinflectionData {
+pub struct DeinflectionMeta {
     pub source: DeinflectionSource,
-    replace_from_back: usize,
-    replace_with: &'static str,
-    replace_with_chars: usize,
+    pub replace_from_back: usize,
+    pub replace_with: &'static str,
+    pub replace_with_chars: usize,
     pub rules: Rules,
     pub reasons: Reasons,
 }
@@ -402,7 +402,7 @@ mod tests {
             source: DeinflectionSource,
         ) -> Deinflection {
             let deinflection = Deinflection(deinflections.deinflections.len());
-            deinflections.deinflections.push(DeinflectionData {
+            deinflections.deinflections.push(DeinflectionMeta {
                 source,
                 replace_from_back,
                 replace_with,
@@ -5076,7 +5076,7 @@ mod tests {
 
             let mut matches = deinflections
                 .iter()
-                .flat_map(|d| d.iter().map(|s| (d.to_string(s), d.data(s))))
+                .flat_map(|d| d.iter().map(|s| (d.to_string(s), d.meta(s))))
                 .filter(|(term, _)| term == case.term)
                 .filter(|(_, data)| data.rules.0.is_empty() || data.rules.0.contains(rules.0))
                 .filter(|(_, data)| data.reasons == reasons);
@@ -5287,7 +5287,7 @@ mod tests {
 
             let mut matches = deinflections
                 .iter()
-                .flat_map(|d| d.iter().map(|s| (d.to_string(s), d.data(s))))
+                .flat_map(|d| d.iter().map(|s| (d.to_string(s), d.meta(s))))
                 .filter(|(term, _)| term == case.term)
                 .filter(|(_, data)| data.rules.0.is_empty() || data.rules.0.contains(rules.0));
             // let mut matches = deinflections
